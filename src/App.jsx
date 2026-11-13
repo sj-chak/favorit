@@ -1,6 +1,5 @@
-
 import Header from './components/Header/Header';
-import SearchInput from './features/search/SearchInput';
+import SearchInput from './features/search/components/SearchInput';
 
 import './App.css';
 
