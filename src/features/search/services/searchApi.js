@@ -52,6 +52,7 @@ export async function fetchOffers(number, brand, signal) {
         key: API_KEY,
         number,
         brand,
+        analogues: 'on',
     });
 
     const response = await fetch(`${API_URL}?${params}`, {

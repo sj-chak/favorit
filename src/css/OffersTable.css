@@ -1,0 +1,66 @@
+
+.offers-table-wrapper {
+    width: 100%;
+    margin-top: 15px;
+    overflow-x: auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.08);
+}
+
+.offers-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 14px;
+}
+
+.offers-table th {
+    padding: 16px 18px;
+    color: #777;
+    font-weight: 500;
+    background: #fafafa;
+    white-space: nowrap;
+}
+
+.offers-table td {
+    padding: 16px 18px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.offers-table tbody tr:hover {
+    background: #fafafa;
+}
+
+.offers-brand {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.offers-name {
+    color: #555;
+}
+
+.offers-price {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.offers-stock {
+    white-space: nowrap;
+}
+
+.offers-empty {
+    margin-top: 15px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    color: #777;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .offers-table {
+        min-width: 600px;
+    }
+}

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,7 +11,10 @@ import {
 } from '../searchSlice';
 
 import '../../../css/SearchInput.css';
+
 import SearchResults from './SearchResults';
+import GoodsTable from './GoodsTable';
+import OffersTable from './OffersTable';
 
 function SearchInput() {
     const dispatch = useDispatch();
@@ -27,7 +29,9 @@ function SearchInput() {
     } = useSelector(state => state.search);
 
     const [query, setQuery] = useState('');
+    const [showResults, setShowResults] = useState(false);
 
+    // Автоматический поиск при вводе
     useEffect(() => {
         const number = query.trim();
 
@@ -48,17 +52,69 @@ function SearchInput() {
         };
     }, [query, dispatch]);
 
+    // Изменение артикула скрывает старую таблицу
+    function handleQueryChange(value) {
+        setQuery(value);
+        setShowResults(false);
+        dispatch(setSelectedBrand(null));
+        dispatch(clearSearch());
+    }
+
+    // Нажатие кнопки или Enter
+    function handleSubmit(event) {
+        event.preventDefault();
+
+        if (!query.trim() || status !== 'succeeded') {
+            return;
+        }
+
+        dispatch(setSelectedBrand(null));
+        setShowResults(true);
+    }
+
+    // Запрос цены и аналогов для конкретной строки
+    function handleSelectItem(item) {
+        setShowResults(false);
+
+        dispatch(setSelectedBrand(item.brand));
+
+        dispatch(searchOffers({
+            number: item.number,
+            brand: item.brand,
+        }));
+    }
+
     return (
         <div className="search-widget">
 
-            <div className="search-form">
+            <div className="search-title">
+                ВАШ ФАВОРИТ
+                <br />
+                В ВЫБОРЕ ЗАПЧАСТЕЙ
+            </div>
+
+            <form className="search-form" onSubmit={handleSubmit}>
                 <Input
                     className="search-input"
                     value={query}
-                    onValueChange={setQuery}
+                    onValueChange={handleQueryChange}
                     placeholder="Введите артикул запчасти"
                 />
-            </div>
+
+                <button
+                    type="submit"
+                    className="search-button"
+                    disabled={!query.trim() || status === 'loading'}
+                >
+                    Найти
+                </button>
+            </form>
+
+            {status === 'loading' && (
+                <div className="search-message">
+                    Поиск...
+                </div>
+            )}
 
             {status === 'succeeded' && goods.length === 0 && (
                 <div className="search-message">
@@ -66,46 +122,54 @@ function SearchInput() {
                 </div>
             )}
 
-            <SearchResults
-                goods={goods}
-                selectedBrand={selectedBrand}
-                onSelectBrand={(brand) => {
-                    dispatch(setSelectedBrand(brand));
+            <div className="search-content">
+                {!selectedBrand && !showResults && (
+                    <SearchResults
+                        goods={goods}
+                        selectedBrand={selectedBrand}
+                        onSelectBrand={(brand) => {
+                            const item = goods.find(item => item.brand === brand);
 
-                    dispatch(searchOffers({
-                        number: query.trim(),
-                        brand,
-                    }));
-                }}
-            />
+                            if (!item) return;
 
-            {offersStatus === 'loading' && (
-                <div className="search-message">
-                    Загружаем предложения...
-                </div>
-            )}
+                            setShowResults(false);
 
-            {offersStatus === 'failed' && (
-                <div className="search-error">
-                    Ошибка загрузки предложений: {offersError}
-                </div>
-            )}
+                            dispatch(setSelectedBrand(brand));
 
-            {offersStatus === 'succeeded' && (
-                <div className="brand-list">
-                    <div className="brand-list-title">
-                        Предложения {selectedBrand}
+                            dispatch(searchOffers({
+                                number: item.number,
+                                brand,
+                            }));
+                        }}
+                    />
+                )}
+
+                {showResults && status === 'succeeded' && (
+                    <GoodsTable
+                        goods={goods}
+                        onSelect={handleSelectItem}
+                    />
+                )}
+
+                {offersStatus === 'loading' && (
+                    <div className="search-message">
+                        Загружаем цены и аналоги...
                     </div>
+                )}
 
-                    {offers.length === 0 ? (
-                        <div>Предложения не найдены</div>
-                    ) : (
-                        <pre>
-                            {JSON.stringify(offers, null, 2)}
-                        </pre>
-                    )}
-                </div>
-            )}
+                {offersStatus === 'failed' && (
+                    <div className="search-error">
+                        Ошибка загрузки предложений: {offersError}
+                    </div>
+                )}
+
+                {offersStatus === 'succeeded' && (
+                    <div className="offers-section">
+                        <h3>Предложения: {selectedBrand}</h3>
+                        <OffersTable offers={offers} />
+                    </div>
+                )}
+            </div>
 
         </div>
     );
