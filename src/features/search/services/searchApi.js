@@ -29,7 +29,11 @@ export async function fetchBrands(number, signal) {
     }
 
     const goods = Array.isArray(result.goods)
-        ? result.goods
+        ? result.goods.filter(item =>
+            item &&
+            item.brand?.trim() &&
+            String(item.number ?? '').trim()
+        )
         : [];
 
     // Получаем уникальные названия производителей

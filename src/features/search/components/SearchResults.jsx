@@ -17,7 +17,7 @@ function SearchResults({ goods, selectedBrand, onSelectBrand }) {
                             ? 'search-result selected'
                             : 'search-result'
                     }
-                    onClick={() => onSelectBrand(item.brand)}
+                    onClick={() => onSelectBrand(item)}
                 >
                     <span className="result-brand">
                         {item.brand}

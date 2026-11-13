@@ -70,6 +70,13 @@ const searchSlice = createSlice({
             state.currentRequestId = null;
         },
 
+        clearOffers: (state) => {
+            state.offers = [];
+            state.offersStatus = 'idle';
+            state.offersError = null;
+            state.offersRequestId = null;
+        },
+
         setSelectedBrand: (state, action) => {
             state.selectedBrand = action.payload;
         },
@@ -153,6 +160,7 @@ const searchSlice = createSlice({
 
 export const {
     clearSearch,
+    clearOffers,
     setSelectedBrand,
 } = searchSlice.actions;
 

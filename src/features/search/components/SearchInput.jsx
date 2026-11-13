@@ -7,6 +7,7 @@ import {
     searchBrands,
     searchOffers,
     clearSearch,
+    clearOffers,
     setSelectedBrand,
 } from '../searchSlice';
 
@@ -22,6 +23,7 @@ function SearchInput() {
     const {
         goods,
         status,
+        error,
         selectedBrand,
         offers,
         offersStatus,
@@ -69,6 +71,8 @@ function SearchInput() {
         }
 
         dispatch(setSelectedBrand(null));
+        dispatch(clearOffers());
+
         setShowResults(true);
     }
 
@@ -127,18 +131,14 @@ function SearchInput() {
                     <SearchResults
                         goods={goods}
                         selectedBrand={selectedBrand}
-                        onSelectBrand={(brand) => {
-                            const item = goods.find(item => item.brand === brand);
-
-                            if (!item) return;
-
+                        onSelectBrand={(item) => {
                             setShowResults(false);
 
-                            dispatch(setSelectedBrand(brand));
+                            dispatch(setSelectedBrand(item.brand));
 
                             dispatch(searchOffers({
                                 number: item.number,
-                                brand,
+                                brand: item.brand,
                             }));
                         }}
                     />
@@ -160,6 +160,12 @@ function SearchInput() {
                 {offersStatus === 'failed' && (
                     <div className="search-error">
                         Ошибка загрузки предложений: {offersError}
+                    </div>
+                )}
+
+                {status === 'failed' && (
+                    <div className="search-error">
+                        Ошибка поиска: {error}
                     </div>
                 )}
 
