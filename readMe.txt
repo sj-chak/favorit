@@ -1,5 +1,5 @@
 клонируем репозиторий
-git clone git@github.com:USERNAME/favorit.git
+git clone git@github.com:sj-chak/favorit.git
 
 переходим в папку с проектом
 cd favorit
